@@ -6,14 +6,14 @@ var output = "";
 try {
 var parentTemplate = null;
 if(runtime.contextOrFrameLookup(context, frame, "testing")) {
-output += "\r\nyou are testing\r\n";
+output += "\nyou are testing\n";
 ;
 }
 else {
-output += "\r\nyou aren't testing\r\n";
+output += "\nyou aren't testing\n";
 ;
 }
-output += "\r\n";
+output += "\n";
 if(parentTemplate) {
 parentTemplate.rootRenderFunc(env, context, frame, runtime, cb);
 } else {
@@ -40,7 +40,7 @@ try {
 var parentTemplate = null;
 output += "hi there ";
 output += runtime.suppressValue(runtime.contextOrFrameLookup(context, frame, "name"), env.opts.autoescape);
-output += "\r\n";
+output += "\n";
 if(parentTemplate) {
 parentTemplate.rootRenderFunc(env, context, frame, runtime, cb);
 } else {

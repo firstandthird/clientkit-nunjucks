@@ -69,6 +69,6 @@ test('precompiles a file object', (t) => {
   task.execute((err) => {
     t.equal(err, null, 'not erroring');
     t.equal(fs.existsSync(outpath), true, 'file exists');
-    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out3.js', 'utf8'));
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out2.js', 'utf8'));
   });
 });
