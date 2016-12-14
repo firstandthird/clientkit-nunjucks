@@ -48,3 +48,73 @@ test('converts array of files and saves', (t) => {
     t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out2.js', 'utf8'));
   });
 });
+
+test('precompiles a file object', (t) => {
+  t.plan(3);
+  const file = `out3-${new Date().getTime()}.js`;
+  const outpath = `${os.tmpdir()}/${file}`;
+  const files = {};
+  files[file] = {
+    type: 'precompile',
+    input: ['test/fixtures/in.njk', 'test/fixtures/in2.njk'],
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.equal(err, null, 'not erroring');
+    t.equal(fs.existsSync(outpath), true, 'file exists');
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out2.js', 'utf8'));
+  });
+});
+
+test('returns an error if passed an array to compile option', (t) => {
+  t.plan(1);
+  const file = `out4-${new Date().getTime()}.js`;
+  const files = {};
+  files[file] = {
+    type: 'compile',
+    input: ['test/fixtures/in.njk', 'test/fixtures/in2.njk'],
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.notEqual(err, null, 'errors if you pass compile a list of files');
+  });
+});
+
+test('compiles a file object', (t) => {
+  t.plan(3);
+  const file = `out5-${new Date().getTime()}.html`;
+  const outpath = `${os.tmpdir()}/${file}`;
+  const files = {};
+  files[file] = {
+    type: 'compile',
+    input: 'test/fixtures/in3.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!',
+      fox: '????'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.equal(err, null, 'not erroring');
+    t.equal(fs.existsSync(outpath), true, 'file exists');
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
+  });
+});
