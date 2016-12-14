@@ -48,3 +48,27 @@ test('converts array of files and saves', (t) => {
     t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out2.js', 'utf8'));
   });
 });
+
+test('precompiles a file object', (t) => {
+  t.plan(3);
+  const file = `out3-${new Date().getTime()}.js`;
+  const outpath = `${os.tmpdir()}/${file}`;
+  const files = {};
+  files[file] = {
+    type: 'precompile',
+    input: ['test/fixtures/in.njk', 'test/fixtures/in2.njk'],
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.equal(err, null, 'not erroring');
+    t.equal(fs.existsSync(outpath), true, 'file exists');
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out3.js', 'utf8'));
+  });
+});

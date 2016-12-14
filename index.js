@@ -5,7 +5,12 @@ const async = require('async');
 const os = require('os');
 
 class NunjucksTask extends ClientKitTask {
-  process(input, output, done) {
+
+  compile(input, output, done) {
+    return done();
+  }
+
+  precompile(input, output, done) {
     if (!Array.isArray(input)) {
       input = [input];
     }
@@ -24,6 +29,17 @@ class NunjucksTask extends ClientKitTask {
       }
       this.write(output, results.join(os.EOL), done);
     });
+  }
+
+  process(input, output, done) {
+    // if it's a suitable compile specifier:
+    if (typeof input === 'object' && input.type && input.input) {
+      if (input.type === 'precompile') {
+        return this.precompile(input.input, output, done);
+      }
+      return this.compile(input, output, done);
+    }
+    return this.precompile(input, output, done);
   }
 }
 
