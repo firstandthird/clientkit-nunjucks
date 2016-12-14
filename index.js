@@ -3,11 +3,24 @@ const ClientKitTask = require('clientkit-task');
 const nunjucks = require('nunjucks');
 const async = require('async');
 const os = require('os');
-
+const fs = require('fs');
 class NunjucksTask extends ClientKitTask {
 
-  compile(input, output, done) {
-    return done();
+  compile(input, output, allDone) {
+    if (Array.isArray(input.input)) {
+      return allDone(new Error('Compile can only compile individual files, not lists of files'));
+    }
+    const data = input.data ? input.data : {};
+    async.autoInject({
+      buffer: (done) => fs.readFile(input.input, done),
+      compile: (buffer, done) => done(null, nunjucks.compile(buffer.toString('utf-8')).render(data)),
+      write: (compile, done) => this.write(output, compile, done)
+    }, (err, results) => {
+      if (err) {
+        return allDone(err);
+      }
+      return allDone(null, results.compile);
+    });
   }
 
   precompile(input, output, done) {
@@ -39,6 +52,7 @@ class NunjucksTask extends ClientKitTask {
       }
       return this.compile(input, output, done);
     }
+    // otherwise assume it's a filepath or list of filepaths:
     return this.precompile(input, output, done);
   }
 }
