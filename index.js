@@ -14,6 +14,7 @@ class NunjucksTask extends ClientKitTask {
     async.autoInject({
       buffer: (done) => fs.readFile(input.input, done),
       env: (done) => done(null, this.options.path ? new nunjucks.Environment(new nunjucks.FileSystemLoader(this.options.path)) :
+        new nunjucks.Environment(new nunjucks.FileSystemLoader(process.cwd()))),
       compile: (buffer, env, done) => done(null, nunjucks.compile(buffer.toString('utf-8'), env).render(data)),
       write: (compile, done) => this.write(output, compile, done)
     }, (err, results) => {
