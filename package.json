@@ -1,6 +1,6 @@
 {
   "name": "clientkit-nunjucks",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "ClientKit task to precompile nunjucks templates",
   "main": "index.js",
   "scripts": {

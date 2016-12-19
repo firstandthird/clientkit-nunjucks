@@ -1,4 +1,11 @@
 
+1.0.0 / 2016-12-15
+==================
+
+  * supports compile for static html sites
+  * travis
+  * add support for precompiling an object input
+
 0.0.3 / 2016-11-29
 ==================
 
