@@ -13,7 +13,8 @@ class NunjucksTask extends ClientKitTask {
     const data = input.data ? input.data : {};
     async.autoInject({
       buffer: (done) => fs.readFile(input.input, done),
-      compile: (buffer, done) => done(null, nunjucks.compile(buffer.toString('utf-8')).render(data)),
+      env: (done) => done(null, this.options.path ? new nunjucks.Environment(new nunjucks.FileSystemLoader(this.options.path)) : new nunjucks.Environment()),
+      compile: (buffer, env, done) => done(null, nunjucks.compile(buffer.toString('utf-8'), env).render(data)),
       write: (compile, done) => this.write(output, compile, done)
     }, (err, results) => {
       if (err) {
@@ -27,11 +28,11 @@ class NunjucksTask extends ClientKitTask {
     if (!Array.isArray(input)) {
       input = [input];
     }
+    const env = this.options.path ? nunjucks.configure(this.options.path) : nunjucks;
     async.map(input, (file, next) => {
-      const env = new nunjucks.Environment();
       let out = null;
       try {
-        out = nunjucks.precompile(file, { env });
+        out = env.precompile(file);
       } catch (e) {
         return next(e);
       }
