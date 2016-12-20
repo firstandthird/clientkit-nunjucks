@@ -134,13 +134,13 @@ test('compiles a file object with a path to support "extend" ', (t) => {
     }
   };
   const task = new NunjucksTask('nunjucks', {
-    path: 'test/expected', // `${__dirname}/expected`,
+    path: 'test/expected',
     dist: os.tmpdir(),
     files
   });
   task.execute((err) => {
     t.equal(err, null, 'not erroring');
     t.equal(fs.existsSync(outpath), true, 'file exists');
-    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out1.js', 'utf8'));
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
   });
 });
