@@ -94,7 +94,7 @@ test('returns an error if passed an array to compile option', (t) => {
   });
 });
 
-test('returns an error when a render error occurs', (t) => {
+test('returns an error when a compile error occurs', (t) => {
   t.plan(3);
   const files = {};
   const results = [];
@@ -122,6 +122,37 @@ test('returns an error when a render error occurs', (t) => {
     t.notEqual(err, null, 'errors if you pass an unrenderable files');
     t.equal(results.length, 1, 'logs the error');
     t.equal(results[0].message.indexOf('ENOENT') > -1, true);
+  });
+});
+
+test('returns an error when a precompile error occurs', (t) => {
+  t.plan(3);
+  const files = {};
+  const results = [];
+  const tagResults = [];
+  const temp = console.log;
+  console.log = (tags, data) => {
+    results.push(data);
+    tagResults.push(tags);
+  };
+  const file = 'notGonnaHappen.js';
+  files[file] = {
+    type: 'precompile',
+    input: ['test/fixtures/broke.njk'],
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    console.log = temp;
+    t.notEqual(err, null, 'errors if you pass an unrenderable files');
+    t.equal(results.length, 1, 'logs the error');
+    t.equal(results[0].message.indexOf('pathStats') > -1, true);
   });
 });
 
