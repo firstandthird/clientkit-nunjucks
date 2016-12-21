@@ -6,6 +6,13 @@ const os = require('os');
 const fs = require('fs');
 class NunjucksTask extends ClientKitTask {
 
+  constructor(server, options, runner) {
+    super(server, options, runner);
+    // set up the compile environment we will use:
+    const path = this.options.path || process.cwd();
+    this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(path));
+  }
+
   compile(input, output, allDone) {
     if (Array.isArray(input.input)) {
       return allDone(new Error('Compile can only compile individual files, not lists of files'));
@@ -13,7 +20,11 @@ class NunjucksTask extends ClientKitTask {
     const data = input.data ? input.data : {};
     async.autoInject({
       buffer: (done) => fs.readFile(input.input, done),
-      compile: (buffer, done) => done(null, nunjucks.compile(buffer.toString('utf-8')).render(data)),
+      compile: (buffer, done) => {
+        const text = buffer.toString('utf-8');
+        const renderer = nunjucks.compile(text, this.env);
+        return done(null, renderer.render(data));
+      },
       write: (compile, done) => this.write(output, compile, done)
     }, (err, results) => {
       if (err) {
@@ -28,10 +39,9 @@ class NunjucksTask extends ClientKitTask {
       input = [input];
     }
     async.map(input, (file, next) => {
-      const env = new nunjucks.Environment();
       let out = null;
       try {
-        out = nunjucks.precompile(file, { env });
+        out = nunjucks.precompile(file, { env: this.env });
       } catch (e) {
         return next(e);
       }

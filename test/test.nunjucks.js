@@ -118,3 +118,29 @@ test('compiles a file object', (t) => {
     t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
   });
 });
+
+test('compiles a file object with a path to support "extend" ', (t) => {
+  t.plan(3);
+  const file = `out6-${new Date().getTime()}.html`;
+  const outpath = `${os.tmpdir()}/${file}`;
+  const files = {};
+  files[file] = {
+    type: 'compile',
+    input: 'test/fixtures/path.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!',
+      fox: '????'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    path: 'test/expected',
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.equal(err, null, 'not erroring');
+    t.equal(fs.existsSync(outpath), true, 'file exists');
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
+  });
+});

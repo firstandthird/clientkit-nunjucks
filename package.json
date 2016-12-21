@@ -4,7 +4,7 @@
   "description": "ClientKit task to precompile nunjucks templates",
   "main": "index.js",
   "scripts": {
-    "test": "tape test/index.js | tap-spec"
+    "test": "tape test/test.*.js | tap-spec"
   },
   "repository": {
     "type": "git",
