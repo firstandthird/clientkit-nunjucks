@@ -9,7 +9,7 @@ class NunjucksTask extends ClientKitTask {
   constructor(server, options, runner) {
     super(server, options, runner);
     // set up the compile environment we will use:
-    const path = this.options.path ? this.options.path : process.cwd();
+    const path = this.options.path || process.cwd();
     this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(path));
   }
 
