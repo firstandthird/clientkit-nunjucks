@@ -1,4 +1,11 @@
 
+1.1.0 / 2016-12-20
+==================
+
+  * updated clientkit-task
+  * load files from cwd()
+  * adds environment option
+
 1.0.0 / 2016-12-15
 ==================
 
