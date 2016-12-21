@@ -94,6 +94,37 @@ test('returns an error if passed an array to compile option', (t) => {
   });
 });
 
+test('returns an error when a render error occurs', (t) => {
+  t.plan(3);
+  const files = {};
+  const results = [];
+  const tagResults = [];
+  const temp = console.log;
+  console.log = (tags, data) => {
+    results.push(data);
+    tagResults.push(tags);
+  };
+  const file = 'notGonnaHappen.js';
+  files[file] = {
+    type: 'compile',
+    input: 'test/fixtures/broke.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    console.log = temp;
+    t.notEqual(err, null, 'errors if you pass an unrenderable files');
+    t.equal(results.length, 1, 'logs the error');
+    t.equal(results[0].message.indexOf('ENOENT') > -1, true);
+  });
+});
+
 test('compiles a file object', (t) => {
   t.plan(3);
   const file = `out5-${new Date().getTime()}.html`;

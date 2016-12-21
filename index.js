@@ -17,6 +17,7 @@ class NunjucksTask extends ClientKitTask {
       write: (compile, done) => this.write(output, compile, done)
     }, (err, results) => {
       if (err) {
+        this.log(['error', 'clientkit-nunjucks'], err);
         return allDone(err);
       }
       return allDone(null, results.compile);
@@ -38,6 +39,7 @@ class NunjucksTask extends ClientKitTask {
       next(null, out);
     }, (err, results) => {
       if (err) {
+        this.log(['error', 'clientkit-nunjucks'], err);
         return done(err);
       }
       this.write(output, results.join(os.EOL), done);
