@@ -4,6 +4,8 @@ const NunjucksTask = require('../');
 const ClientKitTask = require('clientkit-task');
 const fs = require('fs');
 const os = require('os');
+const async = require('async');
+
 
 test('instance of', (t) => {
   t.plan(1);
@@ -123,32 +125,7 @@ test('compiles a file object with a path to support "extend" ', (t) => {
     t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
   });
 });
-/*
-test('allows you to turn off cacheing: ', (t) => {
-  t.plan(3);
-  const file = `out7-${new Date().getTime()}.html`;
-  const outpath = `${os.tmpdir()}/${file}`;
-  const files = {};
-  files[file] = {
-    type: 'compile',
-    input: 'test/fixtures/path.njk',
-    data: {
-      dog: 'woof!',
-      cat: 'meow!',
-      fox: '????'
-    }
-  };
-  const task = new NunjucksTask('nunjucks', {
-    path: 'test/expected',
-    dist: os.tmpdir(),
-    files
-  });
-  task.execute((err) => {
-    t.equal(fs.existsSync(outpath), true, 'file exists');
-    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
-  });
-});
-*/
+
 test('returns an error if passed an array to compile option', (t) => {
   t.plan(1);
   const file = `out4-${new Date().getTime()}.js`;
@@ -214,14 +191,14 @@ test('returns an error when a precompile error occurs', (t) => {
   });
 });
 
-test('caches previous env by default', (t) => {
-  t.plan(3);
+test('does not cache compile jobs by default', (t) => {
+  t.plan(5);
   const file = `out6-${new Date().getTime()}.html`;
   const outpath = `${os.tmpdir()}/${file}`;
   const files = {};
   files[file] = {
     type: 'compile',
-    input: 'test/fixtures/path.njk',
+    input: 'test/fixtures/in4.njk',
     data: {
       dog: 'woof!',
       cat: 'meow!',
@@ -229,13 +206,65 @@ test('caches previous env by default', (t) => {
     }
   };
   const task = new NunjucksTask('nunjucks', {
-    path: 'test/expected',
     dist: os.tmpdir(),
     files
   });
-  task.execute((err) => {
-    t.equal(err, null, 'not erroring');
-    t.equal(fs.existsSync(outpath), true, 'file exists');
-    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
+  async.autoInject({
+    firstPass: (done) => task.execute(done),
+    verifyFirstPass: (firstPass, done) => {
+      t.equal(fs.existsSync(outpath), true, 'file exists');
+      t.equal(fs.readFileSync(outpath, 'utf8').indexOf('woof!') > -1, true);
+      done();
+    },
+    modifyTemplate: (verifyFirstPass, done) => fs.writeFile(files[file].input, '{{ cat }}', done),
+    secondPass: (modifyTemplate, done) => task.execute(done),
+    verifySecondPass: (secondPass, done) => {
+      t.equal(fs.existsSync(outpath), true, 'file exists');
+      t.equal(fs.readFileSync(outpath, 'utf8').indexOf('meow!') > -1, true);
+      done();
+    },
+    restoreTemplate: (verifySecondPass, done) => fs.writeFile(files[file].input, '{{ dog }}', done),
+  }, (err) => {
+    t.equal(err, null);
+  });
+});
+
+test('caching of previous compile jobs can be enabled by turning noCache to false', (t) => {
+  t.plan(5);
+  const file = `outCache1-${new Date().getTime()}.html`;
+  const outpath = `${os.tmpdir()}/${file}`;
+  const files = {};
+  files[file] = {
+    type: 'compile',
+    input: 'test/fixtures/in4.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!',
+      fox: '????'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    noCache: false,
+    dist: os.tmpdir(),
+    files
+  });
+  async.autoInject({
+    firstPass: (done) => task.execute(done),
+    verifyFirstPass: (firstPass, done) => {
+      t.equal(fs.existsSync(outpath), true, 'file exists');
+      t.equal(fs.readFileSync(outpath, 'utf8').indexOf('woof!') > -1, true);
+      done();
+    },
+    modifyTemplate: (verifyFirstPass, done) => fs.writeFile(files[file].input, '{{ cat }}', done),
+    secondPass: (modifyTemplate, done) => task.execute(done),
+    verifySecondPass: (secondPass, done) => {
+      t.equal(fs.existsSync(outpath), true, 'file exists');
+      // should be unchanged from the previous run:
+      t.equal(fs.readFileSync(outpath, 'utf8').indexOf('woof!') > -1, true);
+      done();
+    },
+    restoreTemplate: (verifySecondPass, done) => fs.writeFile(files[file].input, '{{ dog }}', done),
+  }, (err) => {
+    t.equal(err, null);
   });
 });
