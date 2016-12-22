@@ -73,27 +73,6 @@ test('precompiles a file object', (t) => {
   });
 });
 
-test('returns an error if passed an array to compile option', (t) => {
-  t.plan(1);
-  const file = `out4-${new Date().getTime()}.js`;
-  const files = {};
-  files[file] = {
-    type: 'compile',
-    input: ['test/fixtures/in.njk', 'test/fixtures/in2.njk'],
-    data: {
-      dog: 'woof!',
-      cat: 'meow!'
-    }
-  };
-  const task = new NunjucksTask('nunjucks', {
-    dist: os.tmpdir(),
-    files
-  });
-  task.execute((err) => {
-    t.notEqual(err, null, 'errors if you pass compile a list of files');
-  });
-});
-
 test('compiles a file object', (t) => {
   t.plan(3);
   const file = `out5-${new Date().getTime()}.html`;
@@ -120,6 +99,122 @@ test('compiles a file object', (t) => {
 });
 
 test('compiles a file object with a path to support "extend" ', (t) => {
+  t.plan(3);
+  const file = `out6-${new Date().getTime()}.html`;
+  const outpath = `${os.tmpdir()}/${file}`;
+  const files = {};
+  files[file] = {
+    type: 'compile',
+    input: 'test/fixtures/path.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!',
+      fox: '????'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    path: 'test/expected',
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.equal(err, null, 'not erroring');
+    t.equal(fs.existsSync(outpath), true, 'file exists');
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
+  });
+});
+/*
+test('allows you to turn off cacheing: ', (t) => {
+  t.plan(3);
+  const file = `out7-${new Date().getTime()}.html`;
+  const outpath = `${os.tmpdir()}/${file}`;
+  const files = {};
+  files[file] = {
+    type: 'compile',
+    input: 'test/fixtures/path.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!',
+      fox: '????'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    path: 'test/expected',
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.equal(fs.existsSync(outpath), true, 'file exists');
+    t.equal(fs.readFileSync(outpath, 'utf8'), fs.readFileSync('test/expected/out4.html', 'utf8'));
+  });
+});
+*/
+test('returns an error if passed an array to compile option', (t) => {
+  t.plan(1);
+  const file = `out4-${new Date().getTime()}.js`;
+  const files = {};
+  files[file] = {
+    type: 'compile',
+    input: ['test/fixtures/in.njk', 'test/fixtures/in2.njk'],
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.notEqual(err, null, 'errors if you pass compile a list of files');
+  });
+});
+
+test('returns an error when a compile error occurs', (t) => {
+  t.plan(2);
+  const files = {};
+  const file = 'notGonnaHappen.js';
+  files[file] = {
+    type: 'compile',
+    input: 'test/fixtures/broke.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.notEqual(err, null, 'errors if you pass an unrenderable files');
+    t.equal(err.message.indexOf('ENOENT') > -1, true);
+  });
+});
+
+test('returns an error when a precompile error occurs', (t) => {
+  t.plan(2);
+  const files = {};
+  const file = 'notGonnaHappen.js';
+  files[file] = {
+    type: 'precompile',
+    input: ['test/fixtures/broke.njk'],
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.notEqual(err, null, 'errors if you pass an unrenderable files');
+    t.equal(err.message.indexOf('pathStats') > -1, true);
+  });
+});
+
+test('caches previous env by default', (t) => {
   t.plan(3);
   const file = `out6-${new Date().getTime()}.html`;
   const outpath = `${os.tmpdir()}/${file}`;

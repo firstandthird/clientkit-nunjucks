@@ -8,11 +8,18 @@ class NunjucksTask extends ClientKitTask {
 
   constructor(server, options, runner, logger) {
     super(server, options, runner, logger);
-    // set up the compile environment we will use:
-    const path = this.options.path || process.cwd();
-    this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(path));
   }
 
+  // caches the environment for future executions, unless noCache is set:
+  getEnv() {
+    if (options.noCache || !this.env) {
+      // set up the compile environment we will use:
+      const path = this.options.path || process.cwd();
+      this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(path));
+    }
+    return this.env;
+  }
+  
   compile(input, output, allDone) {
     if (Array.isArray(input.input)) {
       return allDone(new Error('Compile can only compile individual files, not lists of files'));
