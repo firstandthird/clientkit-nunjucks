@@ -100,6 +100,48 @@ test('compiles a file object', (t) => {
   });
 });
 
+test('does not crash when a render error occurs', (t) => {
+  t.plan(1);
+  const files = {};
+  const file = 'notGonnaHappen.js';
+  files[file] = {
+    type: 'compile',
+    input: 'does/not/exist.njk',
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.notEqual(err, null, 'errors if you pass an unrenderable files');
+  });
+});
+
+test('does not crash when a precompile error occurs', (t) => {
+  t.plan(1);
+  const files = {};
+  const file = 'notGonnaHappen.js';
+  files[file] = {
+    type: 'precompile',
+    input: ['test/fixtures/broke.njk'],
+    data: {
+      dog: 'woof!',
+      cat: 'meow!'
+    }
+  };
+  const task = new NunjucksTask('nunjucks', {
+    dist: os.tmpdir(),
+    files
+  });
+  task.execute((err) => {
+    t.notEqual(err, null, 'errors if you pass an unrenderable files');
+  });
+});
+
 test('compiles a file object with a path to support "extend" ', (t) => {
   t.plan(3);
   const file = `out6-${new Date().getTime()}.html`;
