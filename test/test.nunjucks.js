@@ -269,3 +269,4 @@ test('does not cache compile jobs by default', (t) => {
   }, (err) => {
     t.equal(err, null);
   });
+});
