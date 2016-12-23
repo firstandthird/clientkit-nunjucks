@@ -21,9 +21,13 @@ class NunjucksTask extends ClientKitTask {
     async.autoInject({
       buffer: (done) => fs.readFile(input.input, done),
       compile: (buffer, done) => {
-        const text = buffer.toString('utf-8');
-        const renderer = nunjucks.compile(text, this.env);
-        return done(null, renderer.render(data));
+        try {
+          const text = buffer.toString('utf-8');
+          const renderer = nunjucks.compile(text, this.env);
+          return done(null, renderer.render(data));
+        } catch (e) {
+          return done(e);
+        }
       },
       write: (compile, done) => this.write(output, compile, done)
     }, (err, results) => {
