@@ -4,13 +4,16 @@ const nunjucks = require('nunjucks');
 const async = require('async');
 const os = require('os');
 const fs = require('fs');
+
 class NunjucksTask extends ClientKitTask {
 
   constructor(server, options, runner, logger) {
     super(server, options, runner, logger);
     // set up the compile environment we will use:
     const path = this.options.path || process.cwd();
-    this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(path));
+    // set noCache option for nunjucks if its selected:
+    const noCache = this.options.noCache === undefined ? true : this.options.noCache;
+    this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(path, { noCache }));
   }
 
   compile(input, output, allDone) {
