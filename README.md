@@ -1,2 +1,2 @@
-# clientkit-nunjucks
-ClientKit task to precompile nunjucks templates
+# runkit-nunjucks
+RunKit task to precompile nunjucks templates

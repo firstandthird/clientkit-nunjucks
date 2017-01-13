@@ -1,7 +1,7 @@
 'use strict';
 const test = require('tape');
 const NunjucksTask = require('../');
-const ClientKitTask = require('clientkit-task');
+const RunKitTask = require('runkit-task');
 const fs = require('fs');
 const os = require('os');
 
@@ -10,7 +10,7 @@ test('instance of', (t) => {
 
   const nt = new NunjucksTask();
 
-  t.equal(nt instanceof ClientKitTask, true, 'instance of ClientKitTask');
+  t.equal(nt instanceof RunKitTask, true, 'instance of RunKitTask');
 });
 
 test('converts and saves', (t) => {
@@ -23,7 +23,7 @@ test('converts and saves', (t) => {
   const task = new NunjucksTask('nunjucks', {
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.equal(err, null, 'not erroring');
     t.equal(fs.existsSync(outpath), true, 'file exists');
@@ -41,7 +41,7 @@ test('converts array of files and saves', (t) => {
   const task = new NunjucksTask('nunjucks', {
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.equal(err, null, 'not erroring');
     t.equal(fs.existsSync(outpath), true, 'file exists');
@@ -65,7 +65,7 @@ test('precompiles a file object', (t) => {
   const task = new NunjucksTask('nunjucks', {
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.equal(err, null, 'not erroring');
     t.equal(fs.existsSync(outpath), true, 'file exists');
@@ -88,7 +88,7 @@ test('returns an error if passed an array to compile option', (t) => {
   const task = new NunjucksTask('nunjucks', {
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.notEqual(err, null, 'errors if you pass compile a list of files');
   });
@@ -109,7 +109,7 @@ test('does not crash when a render error occurs', (t) => {
   const task = new NunjucksTask('nunjucks', {
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.notEqual(err, null, 'errors if you pass an unrenderable files');
   });
@@ -130,7 +130,7 @@ test('does not crash when a precompile error occurs', (t) => {
   const task = new NunjucksTask('nunjucks', {
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.notEqual(err, null, 'errors if you pass an unrenderable files');
   });
@@ -153,7 +153,7 @@ test('compiles a file object', (t) => {
   const task = new NunjucksTask('nunjucks', {
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.equal(err, null, 'not erroring');
     t.equal(fs.existsSync(outpath), true, 'file exists');
@@ -179,7 +179,7 @@ test('compiles a file object with a path to support "extend" ', (t) => {
     path: 'test/expected',
     dist: os.tmpdir(),
     files
-  });
+  }, {});
   task.execute((err) => {
     t.equal(err, null, 'not erroring');
     t.equal(fs.existsSync(outpath), true, 'file exists');

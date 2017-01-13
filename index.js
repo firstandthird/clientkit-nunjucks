@@ -1,13 +1,12 @@
 'use strict';
-const ClientKitTask = require('clientkit-task');
+const RunKitTask = require('runkit-task');
 const nunjucks = require('nunjucks');
 const async = require('async');
 const os = require('os');
 const fs = require('fs');
-class NunjucksTask extends ClientKitTask {
+class NunjucksTask extends RunKitTask {
 
-  constructor(server, options, runner, logger) {
-    super(server, options, runner, logger);
+  init() {
     // set up the compile environment we will use:
     const path = this.options.path || process.cwd();
     this.env = new nunjucks.Environment(new nunjucks.FileSystemLoader(path));

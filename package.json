@@ -1,28 +1,28 @@
 {
-  "name": "clientkit-nunjucks",
+  "name": "runkit-nunjucks",
   "version": "1.1.0",
-  "description": "ClientKit task to precompile nunjucks templates",
+  "description": "runkit task to precompile nunjucks templates",
   "main": "index.js",
   "scripts": {
     "test": "tape test/test.*.js | tap-spec"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/firstandthird/clientkit-nunjucks.git"
+    "url": "git+https://github.com/firstandthird/runkit-nunjucks.git"
   },
   "keywords": [
-    "clientkit",
+    "runkit",
     "nunjucks"
   ],
   "author": "First+Third <code@firstandthird.com> (http://firstandthird.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/firstandthird/clientkit-nunjucks/issues"
+    "url": "https://github.com/firstandthird/runkit-nunjucks/issues"
   },
-  "homepage": "https://github.com/firstandthird/clientkit-nunjucks#readme",
+  "homepage": "https://github.com/firstandthird/runkit-nunjucks#readme",
   "dependencies": {
     "async": "^2.1.2",
-    "clientkit-task": "0.0.8",
+    "runkit-task": "0.0.10",
     "nunjucks": "^3.0.0"
   },
   "devDependencies": {
