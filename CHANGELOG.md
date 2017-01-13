@@ -1,4 +1,14 @@
 
+2.0.0 / 2017-01-13
+==================
+
+  * renamed to runkit-nunjucks
+  * fix(package): update clientkit-task to version 0.0.8
+  * updated tests to check for robustness
+  * does not crash on compile errors
+  * log render errors and test for output messages
+  * log rendering errors, test that errors are logged
+
 1.1.0 / 2016-12-20
 ==================
 
