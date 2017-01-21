@@ -1,29 +1,29 @@
 {
-  "name": "runkit-nunjucks",
+  "name": "taskkit-nunjucks",
   "version": "2.0.0",
-  "description": "runkit task to precompile nunjucks templates",
+  "description": "taskkit task to precompile nunjucks templates",
   "main": "index.js",
   "scripts": {
     "test": "tape test/test.*.js | tap-spec"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/firstandthird/runkit-nunjucks.git"
+    "url": "git+https://github.com/firstandthird/taskkit-nunjucks.git"
   },
   "keywords": [
-    "runkit",
+    "taskkit",
     "nunjucks"
   ],
   "author": "First+Third <code@firstandthird.com> (http://firstandthird.com/)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/firstandthird/runkit-nunjucks/issues"
+    "url": "https://github.com/firstandthird/taskkit-nunjucks/issues"
   },
-  "homepage": "https://github.com/firstandthird/runkit-nunjucks#readme",
+  "homepage": "https://github.com/firstandthird/taskkit-nunjucks#readme",
   "dependencies": {
     "async": "^2.1.2",
-    "runkit-task": "0.0.10",
-    "nunjucks": "^3.0.0"
+    "nunjucks": "^3.0.0",
+    "taskkit-task": "0.0.11"
   },
   "devDependencies": {
     "eslint": "^3.10.2",

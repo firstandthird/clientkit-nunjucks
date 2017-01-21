@@ -1,10 +1,10 @@
 'use strict';
-const RunKitTask = require('runkit-task');
+const TaskKitTask = require('taskkit-task');
 const nunjucks = require('nunjucks');
 const async = require('async');
 const os = require('os');
 const fs = require('fs');
-class NunjucksTask extends RunKitTask {
+class NunjucksTask extends TaskKitTask {
 
   init() {
     // set up the compile environment we will use:
