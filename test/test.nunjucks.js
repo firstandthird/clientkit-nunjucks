@@ -1,7 +1,7 @@
 'use strict';
 const test = require('tape');
 const NunjucksTask = require('../');
-const RunKitTask = require('runkit-task');
+const TaskKitTask = require('taskkit-task');
 const fs = require('fs');
 const os = require('os');
 
@@ -10,7 +10,7 @@ test('instance of', (t) => {
 
   const nt = new NunjucksTask();
 
-  t.equal(nt instanceof RunKitTask, true, 'instance of RunKitTask');
+  t.equal(nt instanceof TaskKitTask, true, 'instance of TaskKitTask');
 });
 
 test('converts and saves', (t) => {
