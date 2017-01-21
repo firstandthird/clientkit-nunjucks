@@ -1,6 +1,6 @@
 {
   "name": "taskkit-nunjucks",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "taskkit task to precompile nunjucks templates",
   "main": "index.js",
   "scripts": {
