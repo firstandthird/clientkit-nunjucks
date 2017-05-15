@@ -4,7 +4,14 @@ const nunjucks = require('nunjucks');
 const async = require('async');
 const os = require('os');
 const fs = require('fs');
+const pathLib = require('path');
+
 class NunjucksTask extends TaskKitTask {
+
+  // returns the module to load when running in a separate process:
+  get classModule() {
+    return pathLib.join(__dirname, 'index.js');
+  }
 
   init() {
     // set up the compile environment we will use:
